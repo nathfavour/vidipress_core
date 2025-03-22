@@ -1,5 +1,5 @@
 name: vidipress_core
-description: A starting point for Dart libraries or applications.
+description: A standalone Flutter/Dart package for video compression
 version: 1.0.0
 repository: https://github.com/nathfavour/vidipress_core.git
 
