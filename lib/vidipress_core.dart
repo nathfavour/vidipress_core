@@ -2,7 +2,7 @@
 ///
 /// This library provides video compression capabilities directly in Dart
 /// without relying on any external dependencies like FFmpeg.
-library vidipress_core;
+library;
 
 export 'src/vidipress_core_base.dart';
 export 'src/compressor/video_compressor.dart';

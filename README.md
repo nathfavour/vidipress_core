@@ -1,39 +1,106 @@
-<!-- 
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+# VidiPress Core
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages). 
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages). 
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
+A standalone Flutter/Dart package for video compression without external dependencies.
 
 ## Features
 
-TODO: List what your package can do. Maybe include images, gifs, or videos.
+VidiPress Core provides a pure Dart implementation for video compression, serving as an alternative to FFmpeg for Flutter applications:
+
+- Compress videos from files or byte arrays
+- Customizable compression parameters (resolution, bitrate, quality)
+- Support for multiple video formats (MP4, WebM, AVI, MOV, MKV)
+- Fine-grained control over compression process
+- Progress tracking and cancellation capabilities
+- No external dependencies or native code required
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+To use this package, add `vidipress_core` as a dependency in your `pubspec.yaml` file:
+
+```yaml
+dependencies:
+  vidipress_core: ^1.0.0
+```
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+Basic usage to compress a video file:
 
 ```dart
-const like = 'sample';
+import 'package:vidipress_core/vidipress_core.dart';
+
+Future<void> compressVideo() async {
+  // Get an instance of VidiPress
+  final vidipress = VidiPress();
+  
+  // Create a compression configuration
+  final config = CompressionConfig(
+    width: 1280,
+    height: 720,
+    quality: 80,
+    includeAudio: true,
+  );
+  
+  // Compress a video file
+  final result = await vidipress.compressFile(
+    '/path/to/video.mp4',
+    config: config,
+  );
+  
+  print('Compressed video size: ${result.size} bytes');
+  print('Resolution: ${result.width}x${result.height}');
+  print('Duration: ${result.durationMs}ms');
+  
+  // Use the compressed video bytes
+  final compressedBytes = result.videoBytes;
+  
+  // You can save these bytes to a file
+  // final file = File('/path/to/output.mp4');
+  // await file.writeAsBytes(compressedBytes);
+}
 ```
+
+Advanced usage with custom parameters:
+
+```dart
+// Compress with target bitrate
+final config = CompressionConfig(
+  bitrate: 1500000, // 1.5 Mbps
+  fps: 24,
+  outputFormat: 'webm',
+);
+
+// Compress from bytes
+final videoBytes = await File('/path/to/video.mp4').readAsBytes();
+final result = await vidipress.compressBytes(
+  videoBytes,
+  config: config,
+);
+
+// Cancel an in-progress compression
+vidipress.cancelCompression();
+```
+
+## How it works
+
+VidiPress Core implements video compression algorithms in pure Dart:
+
+1. It parses video containers (MP4, WebM, etc.) to extract video frames
+2. Decompresses frames to raw image data
+3. Applies compression techniques (resolution scaling, frame rate adjustment, etc.)
+4. Re-encodes using optimized algorithms tailored for each format
+5. Reassembles the video container with the new compressed data
+
+## Performance considerations
+
+As a pure Dart implementation, VidiPress Core prioritizes compatibility over maximum performance. For extremely large videos or performance-critical applications, consider:
+
+- Using smaller segments of video for better memory usage
+- Adjusting the quality settings to balance size and processing time
+- Setting appropriate resolution limits based on target device capabilities
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+- Bug reports and feature requests: [GitHub Issues](https://github.com/nathfavour/vidipress_core/issues)
+- Contributions: Pull requests are welcome
+- More examples: See the `/example` folder in the repository
